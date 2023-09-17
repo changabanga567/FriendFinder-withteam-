@@ -14,7 +14,11 @@ class App:
         self.root = root
         self.root.title("Friend Finder")
 
+<<<<<<< HEAD
     # Create frames
+=======
+        # frames design
+>>>>>>> ad45b0a33b3a5c42e225f4c5c92831a640f89341
         self.login_frame = tk.Frame(self.root)
         self.register_frame = tk.Frame(self.root)
         self.dashboard_frame = tk.Frame(self.root)
@@ -22,6 +26,10 @@ class App:
         self.login_password_var = tk.StringVar()
 
 
+<<<<<<< HEAD
+=======
+        # go back to login frame
+>>>>>>> ad45b0a33b3a5c42e225f4c5c92831a640f89341
         self.show_login_frame()
 
     def hide_all_frames(self):
@@ -416,7 +424,7 @@ class App:
         # Create a label to indicate the friends list
         tk.Label(self.dashboard_frame, text="Friends List", font=("Arial", 16)).pack(pady=10)
 
-        # Iterate over the list of friends and display each one
+        #  go over list of friends and display each one
         for friend_id, username, name in friends:
             friend_frame = tk.Frame(self.dashboard_frame, borderwidth=1, relief="solid")
             friend_frame.pack(fill=tk.BOTH, pady=5)
