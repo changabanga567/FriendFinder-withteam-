@@ -17,7 +17,11 @@ class Database:
         Register a new user.
         """
         try:
-            hashed_password = hashlib.sha256(password.encode('utf-8')).hexdigest()  # Assuming you're using SHA-256 for hashing
+            password = password.strip()
+            print("Original password during registration:", password)
+            hashed_password = hashlib.sha256(password.encode('utf-8')).hexdigest()
+            print("Hashed password during registration:", hashed_password)
+
             self.cursor.execute("INSERT INTO users (username, password, name, email) VALUES (%s, %s, %s, %s)",
                             (username, hashed_password, name, email))
             self.conn.commit()
@@ -30,11 +34,13 @@ class Database:
             return False
 
     def login_user(self, username, password):
-        hashed_password = hashlib.sha256(password.encode('utf-8')).hexdigest()  # Hash the password before checking
+        hashed_password = hashlib.sha256(password.encode('utf-8')).hexdigest()
         query = "SELECT * FROM users WHERE username=%s AND password=%s"
         self.cursor.execute(query, (username, hashed_password))
         result = self.cursor.fetchone()
         return result
+        
+
         
 
     

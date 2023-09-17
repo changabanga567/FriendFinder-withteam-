@@ -1,30 +1,58 @@
 import tkinter as tk
+from tkinter import Label, Entry, Button
 import hashlib
 from tkinter import messagebox
 from database import Database
+db = Database()
+
+
 
 class App:
+
     def __init__(self, root):
         self.current_user_id = None
         self.root = root
         self.root.title("Friend Finder")
 
-        # Define frames
+    # Create frames
         self.login_frame = tk.Frame(self.root)
         self.register_frame = tk.Frame(self.root)
-        self.dashboard_frame = tk.Frame(self.root)  # Initialize the dashboard_frame here
+        self.dashboard_frame = tk.Frame(self.root)
+        self.login_username_var = tk.StringVar()
+        self.login_password_var = tk.StringVar()
 
-        # Default to login frame
+
         self.show_login_frame()
 
-    def show_login_frame(self):
-        """Display the login frame."""
-        # Clear the register frame
-        for widget in self.register_frame.winfo_children():
-         widget.destroy()
+    def hide_all_frames(self):
+        for frame in [self.login_frame, self.register_frame, self.dashboard_frame]:
+            frame.pack_forget()
 
-        self.register_frame.pack_forget()
-        self.login_frame.pack(fill=tk.BOTH, expand=True)
+    def show_login_frame(self):
+        self.hide_all_frames()
+
+        # Login-related widgets
+        self.login_username_label = tk.Label(self.login_frame, text="Username:")
+        self.login_username_label.pack()
+        self.login_username_entry = tk.Entry(self.login_frame, textvariable=self.login_username_var)
+        self.login_username_entry.pack()
+    
+        self.login_password_label = tk.Label(self.login_frame, text="Password:")
+        self.login_password_label.pack()
+        self.login_password_entry = tk.Entry(self.login_frame, textvariable=self.login_password_var, show="*")
+        self.login_password_entry.pack()
+
+        self.login_button = tk.Button(self.login_frame, text="Login", command=self.login_user)
+        self.login_button.pack()
+
+        self.register_button = tk.Button(self.login_frame, text="Register", command=self.show_register_frame)
+        self.register_button.pack()
+
+        self.login_frame.pack(pady=20)
+        self.login_username_entry = tk.Entry(self.login_frame, textvariable=self.login_username_var)
+        self.login_password_entry = tk.Entry(self.login_frame, textvariable=self.login_password_var, show='*')
+
+
 
         # Username
         tk.Label(self.login_frame, text="Username:").pack(pady=10)
@@ -41,14 +69,35 @@ class App:
         tk.Button(self.login_frame, text="Go to Register", command=self.show_register_frame).pack(pady=10)
 
     def login_user(self):
-        username = self.login_username_entry.get()
-        password = self.login_password_entry.get()  # Retrieve password from the entry
+        print("Trying to login...")
+        username = self.login_username_entry.get().strip()
+        password = self.login_password_entry.get().strip()
+        print(f"Original password during login: {password}")
 
-        hashed_password = hashlib.sha256(password.encode('utf-8')).hexdigest()
-        query = "SELECT * FROM users WHERE username=%s AND password=%s"
-        self.cursor.execute(query, (username, hashed_password))
-        result = self.cursor.fetchone()
-        return result
+        user = db.login_user(username, password)
+
+        if user:
+            print("Login successful!")
+            self.current_user_id = user[0]
+            self.show_dashboard()
+            self.hide_login_widgets()
+        else:
+            print("Incorrect username or password.")
+            messagebox.showerror("Error", "Incorrect username or password.")
+
+
+    def hide_login_widgets(self):
+        self.login_username_label.pack_forget()
+        self.login_username_entry.pack_forget()
+        self.login_password_label.pack_forget()
+        self.login_password_entry.pack_forget()
+        self.login_button.pack_forget()
+        self.register_button.pack_forget()
+
+
+
+
+
 
     def logout(self):
         # Clear current user data
